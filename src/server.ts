@@ -2,32 +2,24 @@ import express, { Request, Response } from "express";
 const app = express();
 const port = 3010;
 
-app.get("/", (req: Request, res: Response) => {
-  //localhost:3010
+app.get("/", (req: Request, res: Response) => { //localhost:3010
   res.send("Hello World!");
 });
 
-app.get("/test", (req, res) => {
-  //localhost:3010/test
-  let returnObj = {
-    name: "test",
-    age: 20,
-    address: "Thai",
-  };
-  res.send(returnObj);
-});
+// app.get("/books", (req, res) => { //localhost:3010/books = ออกมาทุกหนังสือ
+//   res.json(books);
+// });
 
-app.get("/test2", (req, res) => {
-  // localhost:3010/test2?id=5
-  const id = req.query.id;
-  const output = `id : ${id}`;
-  res.send(output);
-});
-
-app.get("/books", (req, res) => {
-  res.json(books);
-});
-
+app.get("/books", (req, res) => { //localhost:3010/books?title=Atomic = ออกมาเฉพาะที่ title ที่ query
+  if (req.query.title) { // ใส่ if else ด้วย เพื่อเช็คค่าว่ามีการส่ง query title มาหรือไม่ ถ้าส่งมา ก็ให้แสดงเฉพาะ ที่ query แต่ถ้าไม่ส่งมา ก็ให้แสดงเป็นชื่อหนังสือทั้งหมด
+    const title = req.query.title; 
+    const filteredBooks =  books.filter((book) => book.title === title); 
+    console.log(filteredBooks); // ให้แสดง ใน termimal ด้วย ว่าได้ค่าเป้นอย่างไร 
+    res.json(filteredBooks);
+  } else { 
+    res.json(books)
+  }
+})
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
