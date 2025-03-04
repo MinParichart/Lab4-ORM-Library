@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 const app = express();
+app.use(express.json());
 const port = 3010;
 
 app.get("/", (req: Request, res: Response) => { //localhost:3010
@@ -30,6 +31,37 @@ app.get("/books/:id", (req, res) => { //localhost:3010/books/1
     res.status(404).send("Book not found!");
   }
 });
+
+app.post("/books", (req, res) => { 
+  const newBook : Book = req.body; 
+  newBook.id = books.length + 1; 
+  books.push(newBook); 
+  res.json(newBook)
+})
+
+// กรณี 1 ถ้าจะ เพิ่มข้อมูลหนังสือใน API DOG โดยใช้ author_id
+// { 
+//   "title" : "Eat that frog",
+//   "isbn" : "106", 
+//   "category" : "Productivity", 
+//   "author_id" : "[1]"
+// }
+
+// กรณี 2 ถ้าจะ เพิ่มข้อมูลหนังสือใน API DOG โดยใช้ author 
+// {
+//   "id": "",
+//   "title": "Eat that frog",
+//   "isbn": "106",
+//   "category": "Productivity",
+//   "author": [
+//     {
+//       "id": 4,
+//       "first_name": "Mark",
+//       "last_name": "Crist",
+//       "affiliation": "Self-Improvement Publications"
+//     }
+//   ]
+// }
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
@@ -94,6 +126,15 @@ const authors: Author[] = [
   },
 ];
 
+// const newAuthor : Author [] = [
+//   {
+//   id: 4,
+//   first_name: "Brian",
+//   last_name: "Tracy",
+//   affiliation: "Self-Development"
+//   }
+// ]
+
 const books: Book[] = [
   {
     id: 1,
@@ -131,6 +172,16 @@ const books: Book[] = [
     author: [authors[0]],
   },
 ];
+
+// const newBook : Book [] = [
+//   {
+//     id: 6,
+//     title: "Eat That Frog",
+//     isbn: "106",
+//     category: "Productivity",
+//     author: [newAuthor[0]] // ใส่แค่ id ของ author
+//   }
+// ]
 
 const members: Member[] = [
   {
