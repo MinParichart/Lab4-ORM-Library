@@ -21,6 +21,16 @@ app.get("/books", (req, res) => { //localhost:3010/books?title=Atomic = ออ�
   }
 })
 
+app.get("/books/:id", (req, res) => { //localhost:3010/books/1
+    const id = parseInt(req.params.id); 
+    const filteredBooksById =  books.find((book) => book.id === id); 
+  if (filteredBooksById) { // ถ้าค่าที่ส่งมา = id ที่มีในฐานข้อมูล ก็ให้แสดงข้อมูล ของหนังสือเล่มนั้น
+    res.json(filteredBooksById);
+  } else { // ถ้าค่าที่ส่งมา = id ไม่มีในฐานข้อมูล ก็ให้แสดง status 404 และ แสดงข้อความ Book not found!
+    res.status(404).send("Book not found!");
+  }
+});
+
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
