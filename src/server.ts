@@ -45,7 +45,7 @@ interface Book {
   title: string;
   isbn: string;
   category: string;
-  author_id: Author[];
+  author: Author[];
 }
 
 interface Member {
@@ -98,35 +98,35 @@ const books: Book[] = [
     title: "Atomic Habits",
     isbn: "101",
     category: "Self-Improvement",
-    author_id: [authors[0]],
+    author: [authors[0]],
   },
   {
     id: 2,
     title: "Clean Code",
     isbn: "102",
     category: "Technology",
-    author_id: [authors[1]],
+    author: [authors[1]],
   },
   {
     id: 3,
     title: "Sapiens: A Brief History of Humankind",
     isbn: "103",
     category: "History",
-    author_id: [authors[2]],
+    author: [authors[2]],
   },
   {
     id: 4,
     title: "The Pragmatic Programmer",
     isbn: "104",
     category: "Technology",
-    author_id: [authors[1]],
+    author: [authors[1]],
   },
   {
     id: 5,
     title: "Deep Work",
     isbn: "105",
     category: "Productivity",
-    author_id: [authors[0]],
+    author: [authors[0]],
   },
 ];
 
