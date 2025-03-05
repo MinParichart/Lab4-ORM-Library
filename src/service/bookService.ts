@@ -167,117 +167,117 @@ const borrowedBooks: BorrowedBook[] = [
 ];
 
 // 4.แยกส่วนที่ใช้ในการหาข้อมูลทั้งหมดในตัว Endpoint ออกมาเป็น function ใหม่ เพื่อให้ในส่วน endpoint ใช้ในการเลือกว่าจะนำข้อมูลใดมานำเสนอเท่านั้น
-export function getBookByTitle(title: string): Book[] {
+export function getBookByTitle(title: string): Promise<Book[]> {
     const filteredBooksByTitle = books.filter((book) => book.title.toLowerCase().includes(title));
-  return filteredBooksByTitle;
+  return Promise.resolve(filteredBooksByTitle);
 }
 
-export function getBooksByIsbn(isbn: string): Book[] {
+export function getBooksByIsbn(isbn: string): Promise<Book[]> {
     const filteredBooksByIsbn = books.filter((book) => book.isbn.toLowerCase().includes(isbn));
-  return filteredBooksByIsbn;
+  return Promise.resolve(filteredBooksByIsbn);
 }
 
-export function getBooksByCategory(category: string): Book[] {
+export function getBooksByCategory(category: string): Promise<Book[]> {
     const filteredBooksByCategory = books.filter((book) => book.category === category);
-  return filteredBooksByCategory;
+  return Promise.resolve(filteredBooksByCategory);
 }
-export function getBooksByAuthor_id(authorId: number): Book[] {
-  return books.filter((book) => book.author.some((a) => a.id === authorId)); // กรองหนังสือตาม author id
+export function getBooksByAuthor_id(authorId: number): Promise<Book[]> {
+  return Promise.resolve(books.filter((book) => book.author.some((a) => a.id === authorId))); // กรองหนังสือตาม author id
 }
 
-export function getBooksByAuthor_name(authorName: string): Book [] {
+export function getBooksByAuthor_name(authorName: string): Promise<Book[]> {
   const filteredBooksByAuthor_name = books.filter((book) =>
     book.author.some(
       (a) =>
         a.first_name.toLowerCase().includes(authorName) ||
         a.last_name.toLowerCase().includes(authorName)
     ));
-  return filteredBooksByAuthor_name; // กรองหนังสือตาม author id
+  return Promise.resolve(filteredBooksByAuthor_name); // กรองหนังสือตาม author id
 }
 
-export function getAllBook(): Book[] {
-  return books;
+export function getAllBook(): Promise<Book[]> {
+  return Promise.resolve(books);
+}
+//
+export function getBookById(id: number):Promise<Book | undefined> {
+  return Promise.resolve(books.find((book) => book.id === id));
 }
 
-export function getBookById(id: number): Book | undefined {
-  return books.find((book) => book.id === id);
-}
-
-export function getMemberByFirstName(first_name : string): Member[] {
+export function getMemberByFirstName(first_name : string): Promise<Member[]> {
   const filtered_first_name_Members = members.filter(
     (member) => member.first_name === first_name
   );
-  return filtered_first_name_Members;
+  return Promise.resolve(filtered_first_name_Members);
 }
 
-export function getMemberByLastName(last_name : string): Member[] {
+export function getMemberByLastName(last_name : string): Promise<Member[]> {
   const filtered_last_name_Members = members.filter(
     (member) => member.last_name === last_name
   );
-  return filtered_last_name_Members;
+  return Promise.resolve(filtered_last_name_Members);
 }
 
-export function getMemberByPhoneNumber(phone_number : string): Member[] {
+export function getMemberByPhoneNumber(phone_number : string): Promise<Member[]> {
   const filtered_phone_number_Members = members.filter(
     (member) => member.phone_number === phone_number
   );
-  return filtered_phone_number_Members;
+  return Promise.resolve(filtered_phone_number_Members);
 }
 
-export function getAllMembers(): Member[] {
-  return members;
+export function getAllMembers(): Promise<Member[]> {
+  return Promise.resolve(members);
 }
 
-export function getMemberById(id: number): Member | undefined {
-  return members.find((member) => member.id === id);
+export function getMemberById(id: number): Promise<Member | undefined> {
+  return Promise.resolve(members.find((member) => member.id === id));
 }
 
-export function getBorrowingHistoryByMemberId(memberId : number): BorrowingHistory[] {
+export function getBorrowingHistoryByMemberId(memberId : number): Promise<BorrowingHistory[]> {
   const filteredBorrowingHistoryByMemberId = borrowingHistorys.filter((history) =>
     history.member_id.some((a) => a.id === memberId)
   );
-  return filteredBorrowingHistoryByMemberId;
+  return Promise.resolve(filteredBorrowingHistoryByMemberId);
 }
 
-export function getBorrowingHistoryByBookId(bookId : number): BorrowingHistory[] {
+export function getBorrowingHistoryByBookId(bookId : number): Promise<BorrowingHistory[]> {
   const filteredBorrowingHistoryByBookId = borrowingHistorys.filter((history) =>
     history.book_id.some((a) => a.id === bookId)
   );
-  return filteredBorrowingHistoryByBookId;
+  return Promise.resolve(filteredBorrowingHistoryByBookId);
 }
 
-export function getBorrowingHistoryByBorrowDate(borrowedDate : string): BorrowingHistory[] { // ให้ borrowedDate เป็น string ไป ไม่งั้น มันจะเทียบใน return ไม่ได้  return historyBorrowedDate === borrowedDate;
+export function getBorrowingHistoryByBorrowDate(borrowedDate : string): Promise<BorrowingHistory[]> { // ให้ borrowedDate เป็น string ไป ไม่งั้น มันจะเทียบใน return ไม่ได้  return historyBorrowedDate === borrowedDate;
   const filteredBorrowingHistoryByBorrowedDate = borrowingHistorys.filter((history) => {
     const historyBorrowedDate = new Date(history.borrow_date).toISOString().split("T")[0]; // แปลงเป็นรูปแบบ YYYY-MM-DD
     return historyBorrowedDate === borrowedDate;
   });
-  return filteredBorrowingHistoryByBorrowedDate;
+  return Promise.resolve(filteredBorrowingHistoryByBorrowedDate);
 }
 
-export function getBorrowingHistoryByReturnDate(returnDate : string): BorrowingHistory[] { // ให้ borrowedDate เป็น string ไป ไม่งั้น มันจะเทียบใน return ไม่ได้  return historyBorrowedDate === borrowedDate;
+export function getBorrowingHistoryByReturnDate(returnDate : string): Promise<BorrowingHistory[]> { // ให้ borrowedDate เป็น string ไป ไม่งั้น มันจะเทียบใน return ไม่ได้  return historyBorrowedDate === borrowedDate;
   const filteredBorrowingHistoryByBorrowedDate = borrowingHistorys.filter((history) => {
     const historyBorrowedDate = new Date(history.return_due_date).toISOString().split("T")[0]; // แปลงเป็นรูปแบบ YYYY-MM-DD
     return historyBorrowedDate === returnDate;
   });
-  return filteredBorrowingHistoryByBorrowedDate;
+  return Promise.resolve(filteredBorrowingHistoryByBorrowedDate);
 }
 
-export function getAllBorrowingHistory(): BorrowingHistory[] {
-  return borrowingHistorys;
+export function getAllBorrowingHistory(): Promise<BorrowingHistory[]> {
+  return Promise.resolve(borrowingHistorys);
 }
 
-export function getBorrowingHistoryById(borrowingHistory_id : number): BorrowingHistory | undefined {
-  return borrowingHistorys.find((history) => history.id === borrowingHistory_id);
+export function getBorrowingHistoryById(borrowingHistory_id : number): Promise<BorrowingHistory | undefined> {
+  return Promise.resolve(borrowingHistorys.find((history) => history.id === borrowingHistory_id));
 }
 
-export function getBorrowedBooksByBorrowingHistory_id(borrowingHistory_id : number): BorrowedBook [] {
+export function getBorrowedBooksByBorrowingHistory_id(borrowingHistory_id : number): Promise<BorrowedBook[]> {
   const filteredBorrowedBooksByBorrowingHistory_id = borrowedBooks.filter((history) => // ใช้ .some() ตรวจสอบว่า borrowing_id มี id ตรงกับ borrowingHistory_id หรือไม่
       history.borrowing_id.some((a) => a.id === borrowingHistory_id)
     );
-    return filteredBorrowedBooksByBorrowingHistory_id;
+    return Promise.resolve(filteredBorrowedBooksByBorrowingHistory_id);
 }
 
-export function getBorrowedBooksByActualReturnDate(actualReturnDate : string): BorrowedBook [] {
+export function getBorrowedBooksByActualReturnDate(actualReturnDate : string): Promise<BorrowedBook[]> {
   const filteredBorrowedBooksByActualReturnDate = borrowedBooks.filter((history) => {
     if (actualReturnDate === "null") { // กรองเฉพาะข้อมูลที่ actual_return_date === null //localhost:3010/borrowed-books?actual_return_date=null
       return history.actual_return_date === null;
@@ -289,20 +289,20 @@ export function getBorrowedBooksByActualReturnDate(actualReturnDate : string): B
       return historyActualReturnDate === actualReturnDate;
     }
   });
-    return filteredBorrowedBooksByActualReturnDate;
+    return Promise.resolve(filteredBorrowedBooksByActualReturnDate);
 }
 
-export function getAllBorrowedBooks(): BorrowedBook[] {
-  return borrowedBooks;
+export function getAllBorrowedBooks(): Promise<BorrowedBook[]> {
+  return Promise.resolve(borrowedBooks);
 }
 
-export function getBorrowedBookById(borrowedBook_id : number): BorrowedBook | undefined {
+export function getBorrowedBookById(borrowedBook_id : number): Promise<BorrowedBook | undefined> {
   const filteredBorrowedBooksById = borrowedBooks.find((history) => history.id === borrowedBook_id);
-  return filteredBorrowedBooksById;
+  return Promise.resolve(filteredBorrowedBooksById);
 }
 
-export function addBook(newBook : Book) : Book { 
+export function addBook(newBook : Book) : Promise<Book> { 
   newBook.id = books.length + 1 ; 
   books.push(newBook); 
-  return newBook; 
+  return Promise.resolve(newBook); 
 }
