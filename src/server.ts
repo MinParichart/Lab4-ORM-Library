@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import type { Book } from './service/bookService';
+import type { Book } from './models/books';
 // import type { Author, Member, BorrowingHistory, BorrowedBook} from './service/bookService'; 
 import {
   addBook,
@@ -25,7 +25,7 @@ import {
   getMemberById,
   getMemberByLastName,
   getMemberByPhoneNumber
-} from './service/bookService';
+} from './repository/booksRepository';
 
 const app = express();
 app.use(express.json());
