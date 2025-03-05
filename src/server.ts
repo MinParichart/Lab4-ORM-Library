@@ -25,7 +25,7 @@ import {
   getMemberById,
   getMemberByLastName,
   getMemberByPhoneNumber
-} from './repository/booksRepository';
+} from './service/bookService';
 
 const app = express();
 app.use(express.json());
@@ -284,7 +284,7 @@ app.get("/borrowed-books/:id", (req, res) => { // localhost:3010/borrowed-books/
   }
 });
 
-app.post("/books", (req, res) => {
+app.post("/books", (req, res) => { // localhost:3010/books
   const newBook: Book = req.body;
   addBook(newBook);
   res.json(newBook);
@@ -293,3 +293,25 @@ app.post("/books", (req, res) => {
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
+
+// {
+//   "title": "AAA",
+//   "isbn": "106",
+//   "category": "Teachnology",
+//   "author": [
+//       {
+//           "id": 1,
+//           "first_name": "James",
+//           "last_name": "Clear",
+//           "affiliation": "Self-Improvement Publications"
+//       }
+//   ]
+// }
+
+
+// {
+//   "title": "AAA",
+//   "isbn": "106",
+//   "category": "Technology",
+//   "authorId": ["1"]  // หรือ "authorId": "id" ถ้ามีผู้เขียนเพียงคนเดียว
+// }
