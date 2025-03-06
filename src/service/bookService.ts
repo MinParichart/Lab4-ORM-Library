@@ -4,7 +4,7 @@ import type { Book, BorrowedBook, BorrowingHistory, Member } from '../models/boo
 // 2.สร้างตัวแปร เพื่อเก็บข้อมูลลงใน array ตาม type ของ object ** เราย้าย type ไปไว้ที่ repository.booksRepository.ts เพื่อจัดการได้ง่ายขึ้น เลยต้อง import เข้ามา 
 //ต้องสร้างตัวแปร authors ก่อน เพราะว่า books จะนำ authors ไปอ้างอิงต่อ
 // import {
-//   getAllBook as allBook,
+//   getAllBooks as allBooks,
 //   getAllBorrowedBooks as allBorrowedBooks,
 //   getAllBorrowingHistory as allBorrowingHistory,
 //   getAllMembers as allMembers,
@@ -28,7 +28,8 @@ import type { Book, BorrowedBook, BorrowingHistory, Member } from '../models/boo
 //   addBooks as addNewBooks
 // } from '../repository/booksRepository'; 
 
-import * as repo from '../repository/booksRepository';
+// import * as repo from '../repository/booksRepository';
+import * as repo from '../repository/booksRepositoryDb';
 
 // 4.แยกส่วนที่ใช้ในการหาข้อมูลทั้งหมดในตัว Endpoint ออกมาเป็น function ใหม่ เพื่อให้ในส่วน endpoint ใช้ในการเลือกว่าจะนำข้อมูลใดมานำเสนอเท่านั้น ** เราย้าย type ไปไว้ที่ repository.booksRepository.ts เพื่อจัดการได้ง่ายขึ้น เลยต้อง import เข้ามา 
 
@@ -142,8 +143,8 @@ export function getBooksByAuthor_name(authorName: string): Promise<Book[]> {
   return repo.getBooksByAuthor_name(authorName);
 }
 
-export function getAllBook(): Promise<Book[]> {
-  return repo.getAllBook(); 
+export function getAllBooks(): Promise<Book[]> {
+  return repo.getAllBooks(); 
 }
 
 export function getBookById(id: number):Promise<Book | undefined> {

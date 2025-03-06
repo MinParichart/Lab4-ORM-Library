@@ -11,7 +11,7 @@ export interface Book {
   title: string;
   isbn: string;
   category: string;
-  author: Author[];
+  author: Author[]; // ถ้ามี [] จะมี สมาชิกใน array ได้มากกว่า 1 คน ถ้า Author มี 1 คน ไม่ต้องใส่ []
 }
 
 export interface Member {

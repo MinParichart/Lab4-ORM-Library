@@ -161,7 +161,7 @@ export function getBooksByAuthor_name(authorName: string): Promise<Book[]> {
   return Promise.resolve(filteredBooksByAuthor_name); // กรองหนังสือตาม author id
 }
 
-export function getAllBook(): Promise<Book[]> {
+export function getAllBooks(): Promise<Book[]> {
   return Promise.resolve(books);
 }
 //
@@ -243,19 +243,18 @@ export function getBorrowedBooksByBorrowingHistory_id(borrowingHistory_id : numb
     return Promise.resolve(filteredBorrowedBooksByBorrowingHistory_id);
 }
 
-export function getBorrowedBooksByActualReturnDate(actualReturnDate : string): Promise<BorrowedBook[]> {
+export function getBorrowedBooksByActualReturnDate(actualReturnDate: string): Promise<BorrowedBook[]> {
   const filteredBorrowedBooksByActualReturnDate = borrowedBooks.filter((history) => {
-    if (actualReturnDate === "null") { // กรองเฉพาะข้อมูลที่ actual_return_date === null //localhost:3010/borrowed-books?actual_return_date=null
-      return history.actual_return_date === null;
-    } else if (actualReturnDate === "undefined") { // กรองเฉพาะข้อมูลที่ actual_return_date === undefined //localhost:3010/borrowed-books?actual_return_date=undefined
-      return history.actual_return_date === undefined;
+    if (actualReturnDate === "null" || actualReturnDate === "undefined") {
+      // กรองเฉพาะข้อมูลที่ actual_return_date เป็น null หรือ undefined
+      return history.actual_return_date === null || history.actual_return_date === undefined;
     } else {
       if (!history.actual_return_date) return false; // ถ้าไม่มี actual_return_date ให้คืนค่า false
       const historyActualReturnDate = new Date(history.actual_return_date).toISOString().split("T")[0]; // แปลงเป็นรูปแบบ YYYY-MM-DD
       return historyActualReturnDate === actualReturnDate;
     }
   });
-    return Promise.resolve(filteredBorrowedBooksByActualReturnDate);
+  return Promise.resolve(filteredBorrowedBooksByActualReturnDate);
 }
 
 export function getAllBorrowedBooks(): Promise<BorrowedBook[]> {
@@ -267,8 +266,8 @@ export function getBorrowedBookById(borrowedBook_id : number): Promise<BorrowedB
   return Promise.resolve(filteredBorrowedBooksById);
 }
 
-export function addBook(newBook : Book) : Promise<Book> { 
-  newBook.id = books.length + 1 ; 
-  books.push(newBook); 
-  return Promise.resolve(newBook); 
+export function addBook(newBook: Book): Promise<Book> {
+  newBook.id = books.length + 1; // สร้าง ID ใหม่
+  books.push(newBook); // เพิ่มหนังสือใหม่ลงในอาร์เรย์
+  return Promise.resolve(newBook);
 }

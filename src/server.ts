@@ -3,7 +3,7 @@ import type { Book } from './models/books';
 // import type { Author, Member, BorrowingHistory, BorrowedBook} from './service/bookService'; 
 import {
   addBook,
-  getAllBook,
+  getAllBooks,
   getAllBorrowedBooks,
   getAllBorrowingHistory,
   getAllMembers,
@@ -31,120 +31,96 @@ const app = express();
 app.use(express.json());
 const port = 3010;
 
-
-
 // 3.สร้าง server ด้วย express และสร้าง route
-app.get("/", (req: Request, res: Response) => { // GET localhost:3010
-  res.send("Hello World!");
-});
-
-// app.get("/books", (req, res) => { //localhost:3010/books = ออกมาทุกหนังสือ
-//   res.json(books);
-// });
-
-app.get("/books", async (req: Request, res: Response) => {
-  
-  // ตรวจสอบว่า query "title" มีหรือไม่
+app.get("/books", async (req: Request, res: Response) => { // GET localhost:3010/books
   if (typeof req.query.title === "string") { // GET localhost:3010/books?title=Atomic 
     const title = req.query.title.toLowerCase();
     const filteredBooksByTitle = await getBookByTitle(title);
-    res.json(filteredBooksByTitle) ;
+    res.json(filteredBooksByTitle);
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // ตรวจสอบว่า query "isbn" มีหรือไม่
   if (typeof req.query.isbn === "string") { // GET localhost:3010/books?isbn=101
     const isbn = req.query.isbn.toLowerCase();
     const filteredBooksByIsbn = await getBooksByIsbn(isbn);
-
     if (filteredBooksByIsbn.length > 0) {
-      // ถ้ามี book object ให้แสดง book object ที่ค้นเจอ
       res.json(filteredBooksByIsbn);
     } else {
-      res.status(404).send("Book not found!"); // ถ้าไม่เจอ ให้แสดง status 404 และ ส่งข้อความ Book not found
+      res.status(404).send("Book not found!");
     }
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // ตรวจสอบว่า query "category" มีหรือไม่
-  if (req.query.category) { // GET localhost:3010/books?category=Technology
+  if (req.query.category) {  // GET localhost:3010/books?category=Technology
     const category = req.query.category;
     const filteredBooksByCategory = await getBooksByCategory(category as string);
     res.json(filteredBooksByCategory);
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // กรองหนังสือตาม authorId
-  if (Number(req.query.authorId)) { // GET localhost:3010/books?authorId=1
-    const authorId = Number(req.query.authorId); // แปลงเป็นตัวเลขสำหรับ author id
-    const filteredBooksByAuthor_id = await getBooksByAuthor_id(authorId); // กรองหนังสือตาม author id
-    
+  if (Number(req.query.authorId)) {  // GET localhost:3010/books?authorId=1
+    const authorId = Number(req.query.authorId); const filteredBooksByAuthor_id = await getBooksByAuthor_id(authorId);
     if (filteredBooksByAuthor_id.length > 0) {
+   
       res.json(filteredBooksByAuthor_id);
     } else {
-      res.status(404).json({ message: "Books by this author not found!" }); // ส่งข้อความตอบกลับเป็น json และส่ง status 404
+      res.status(404).json({ message: "Books by this author not found!" });
     }
+    return; // หยุดการทำงานหลังจากส่ง response
   }
-  
-  // กรองหนังสือตามชื่อผู้แต่ง (กรณีใช้ชื่อผู้แต่งแทน id)
+
   if (typeof req.query.authorName === "string") { // GET localhost:3010/books?authorName=James
     const authorName = req.query.authorName.toLowerCase();
-    const filteredBooksByAuthor_name = await getBooksByAuthor_name(authorName)
-
+    const filteredBooksByAuthor_name = await getBooksByAuthor_name(authorName);
     if (filteredBooksByAuthor_name.length > 0) {
       res.json(filteredBooksByAuthor_name);
     } else {
       res.status(404).send("Books by this author not found!");
     }
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // ถ้าไม่ส่งค่า query มาจะส่งรายการหนังสือทั้งหมด
-  else {
-    res.json(await getAllBook());
-  }
+  // ถ้าไม่มี query parameters ใด ๆ
+  res.json(await getAllBooks());
 });
 
-app.get("/books/:id", async (req, res) => { //localhost:3010/books/1
+app.get("/books/:id", async (req, res) => { // GET localhost:3010/books/1
   const id = parseInt(req.params.id);
   const filteredBooksById = await getBookById(id);
   if (filteredBooksById) {
-    // ถ้าค่าที่ส่งมา = id ที่มีในฐานข้อมูล ก็ให้แสดงข้อมูล ของหนังสือเล่มนั้น
-    res.json(await getBookById(id));
+    res.json(filteredBooksById);
   } else {
-    // ถ้าค่าที่ส่งมา = id ไม่มีในฐานข้อมูล ก็ให้แสดง status 404 และ แสดงข้อความ Book not found!
     res.status(404).send("Book not found!");
   }
 });
 
-app.get("/members", async (req, res) => { //localhost:3010/members, //localhost:3010/members?first_name=Thai C.
-  
-  // ค้นหาด้วย first_name member
-  if (req.query.first_name) { // การค้นหาแบบนี้คือ ต้องพิมพ์ชื่อให้ตรงกับ first_nameใน Database เท่านั้น เป็น case sensitive
+app.get("/members", async (req, res) => { 
+  if (req.query.first_name) { // GET localhost:3010/members?first_name=Thai C.
     const first_name = req.query.first_name as string;
-    const filtered_first_name_Members = await getMemberByFirstName(first_name); 
-    res.json(filtered_first_name_Members); //localhost:3010/members?first_name=Alice
-    return; 
+    const filtered_first_name_Members = await getMemberByFirstName(first_name);
+    res.json(filtered_first_name_Members);
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // ค้นหาด้วย last_name member
-  if (req.query.last_name) {
+  if (req.query.last_name) { // GET localhost:3010/members?last_name=Brown
     const last_name = req.query.last_name as string;
-    const filtered_last_name_Members = await getMemberByLastName(last_name)
-    res.json(filtered_last_name_Members); //localhost:3010/members?last_name=Brown
-    return; 
+    const filtered_last_name_Members = await getMemberByLastName(last_name);
+    res.json(filtered_last_name_Members);
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // ค้นหาด้วย phone_number member
-  if (req.query.phone_number) { //localhost:3010/members?phone_number=123-456-7890
+  if (req.query.phone_number) { // GET localhost:3010/members?phone_number=123-456-7890
     const phone_number = req.query.phone_number as string;
-    const filtered_phone_number_Members = await getMemberByPhoneNumber(phone_number)
+    const filtered_phone_number_Members = await getMemberByPhoneNumber(phone_number);
     res.json(filtered_phone_number_Members);
-  } 
-
-  // ถ้าไม่ส่งค่า query มา ให้แสดงรายการ member ทั้งหมด
-  else { //localhost:3010/members?phone_number= หรือ path อื่นๆ นอกเหนือจาก path ข้างบนจะแสดง member ทั้งหมดออกมา
-    res.json(await getAllMembers());
+    return; // หยุดการทำงานหลังจากส่ง response
   }
+
+  // ถ้าไม่มี query parameters ใด ๆ
+  res.json(await getAllMembers());
 });
 
-app.get("/members/:id", async (req, res) => {
+app.get("/members/:id", async (req, res) => { // GET localhost:3010/members/1
   const id = parseInt(req.params.id);
   const filteredMembersById = await getMemberById(id);
   if (filteredMembersById) {
@@ -154,67 +130,54 @@ app.get("/members/:id", async (req, res) => {
   }
 });
 
-app.get("/borrowing-history", async (req: Request, res: Response): Promise<void> => { // void เป็นการบอกว่า ไม่มีการ return ค่า
+app.get("/borrowing-history", async (req: Request, res: Response): Promise<void> => {
   const memberId = Number(req.query.memberId);
   const bookId = Number(req.query.bookId);
   const borrowedDate = req.query.borrow_date as string;
   const returnDate = req.query.return_due_date as string;
 
-  // กรองข้อมูลตาม memberId
-  if (memberId) { //localhost:3010/borrowing-history?memberId=1
-    const filteredBorrowingHistoryByMemberId = await getBorrowingHistoryByMemberId(memberId)
-
+  if (memberId) { // GET localhost:3010/borrowing-history?memberId=1
+    const filteredBorrowingHistoryByMemberId = await getBorrowingHistoryByMemberId(memberId);
     if (filteredBorrowingHistoryByMemberId.length > 0) {
       res.json(filteredBorrowingHistoryByMemberId);
-      return; // หยุดการทำงาน
     } else {
       res.status(404).json({ message: "Borrowing History by this member not found!" });
-      return;
     }
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // กรองข้อมูลตาม bookId
-  if (bookId) { //localhost:3010/borrowing-history?bookId=1
-    const filteredBorrowingHistoryByBookId = await getBorrowingHistoryByBookId(bookId)
-
+  if (bookId) { // GET localhost:3010/borrowing-history?bookId=1
+    const filteredBorrowingHistoryByBookId = await getBorrowingHistoryByBookId(bookId);
     if (filteredBorrowingHistoryByBookId.length > 0) {
-      res.json(filteredBorrowingHistoryByBookId); // ส่ง response และหยุดการทำงาน
-      return;
+      res.json(filteredBorrowingHistoryByBookId);
     } else {
       res.status(404).json({ message: "Borrowing History by this book not found!" });
-      return;
     }
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // กรองข้อมูลตาม borrow_date
-  if (borrowedDate) { // localhost:3010/borrowing-history?borrow_date=2025-03-05
-    const filteredBorrowingHistoryByBorrowedDate = await getBorrowingHistoryByBorrowDate(borrowedDate)
-
+  if (borrowedDate) {  // GET localhost:3010/borrowing-history?borrow_date=2025-03-05
+    const filteredBorrowingHistoryByBorrowedDate = await getBorrowingHistoryByBorrowDate(borrowedDate);
     if (filteredBorrowingHistoryByBorrowedDate.length > 0) {
-      res.json(filteredBorrowingHistoryByBorrowedDate); // ส่ง response และหยุดการทำงาน
-      return;
+      res.json(filteredBorrowingHistoryByBorrowedDate);
     } else {
       res.status(404).json({ message: "Borrowing History by this borrow date not found!" });
-      return;
     }
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // กรองข้อมูลตาม return_due_date
-  if (returnDate) { //localhost:3010/borrowing-history?return_due_date=2024-02-19
-    const filteredBorrowingHistoryByReturnDate = await getBorrowingHistoryByReturnDate(returnDate); 
-
+  if (returnDate) { // GET localhost:3010/borrowing-history?return_due_date=2025-03-19
+    const filteredBorrowingHistoryByReturnDate = await getBorrowingHistoryByReturnDate(returnDate);
     if (filteredBorrowingHistoryByReturnDate.length > 0) {
-      res.json(filteredBorrowingHistoryByReturnDate); // ส่ง response และหยุดการทำงาน
-      return;
+      res.json(filteredBorrowingHistoryByReturnDate);
     } else {
-      res.status(404).json({message: "Borrowing History by this return due date not found!",});
-      return;
+      res.status(404).json({ message: "Borrowing History by this return due date not found!" });
     }
+    return; // หยุดการทำงานหลังจากส่ง response
   }
-  
-  // ถ้าไม่มี query parameters ใดๆ ที่ส่งมา
-  else {res.json(await getAllBorrowingHistory());
-  } 
+
+  // ถ้าไม่มี query parameters ใด ๆ
+  res.json(await getAllBorrowingHistory()); // GET localhost:3010/borrowing-history?return_due_date=
 });
 
 app.get("/borrowing-history/:id", async (req: Request, res: Response): Promise<void> => { // void เป็นการบอกว่า ไม่มีการ return ค่า
@@ -230,51 +193,42 @@ app.get("/borrowing-history/:id", async (req: Request, res: Response): Promise<v
 });
 
 app.get("/borrowed-books", async (req, res) => {
-  const borrowingHistory_id = Number(req.query.borrowingHistoryId); // รับค่าจาก req.query.borrwingHistoryId และแปลงเป็นตัวเลข (Number())
+  const borrowingHistory_id = Number(req.query.borrowingHistoryId);
   const actualReturnDate = req.query.actual_return_date as string;
 
-  // กรองข้อมูลตาม borrowingHistory_id
-  if (borrowingHistory_id) { // localhost:3010/borrowed-books?borrowingHistoryId=1
-    const filteredBorrowedBooksByBorrowingHistory_id = await getBorrowedBooksByBorrowingHistory_id(borrowingHistory_id); 
-
+  if (borrowingHistory_id) { // GET localhost:3010/borrowed-books?borrowingHistoryId=1
+    const filteredBorrowedBooksByBorrowingHistory_id = await getBorrowedBooksByBorrowingHistory_id(borrowingHistory_id);
     if (filteredBorrowedBooksByBorrowingHistory_id.length > 0) {
-      res.json(filteredBorrowedBooksByBorrowingHistory_id); 
-      return; // ถ้าพบข้อมูล ส่ง JSON กลับไป แล้วจบการทำงาน (return)
+      res.json(filteredBorrowedBooksByBorrowingHistory_id);
     } else {
       res.status(404).json({ message: "Borrowed History by this borrowing history id not found!" });
-      return; // ถ้าไม่พบข้อมูล ส่ง HTTP 404 (Not Found) พร้อมข้อความแจ้งเตือน
     }
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // กรองข้อมูลตาม actual_return_date
-  if (actualReturnDate) { // ถ้าผู้ใช้ส่ง actual_return_date มา จะใช้ .filter() กรองข้อมูลตามค่านี้
-    const filteredBorrowedBooksByActualReturnDate = await getBorrowedBooksByActualReturnDate(actualReturnDate)
-
-    // ถ้า actualReturnDate เป็น "null" หรือ "undefined" ให้แสดงข้อมูลที่กรองได้ (แม้ว่าจะไม่มีข้อมูลก็ตาม) //localhost:3010/borrowed-books?actual_return_date=null
-    if (actualReturnDate === "null" || actualReturnDate === "undefined") { //ส่งข้อมูลที่กรองได้ (แม้ว่าจะเป็น [] ว่างเปล่า) //localhost:3010/borrowed-books?actual_return_date=undefined
-      res.json(filteredBorrowedBooksByActualReturnDate); // ส่งข้อมูลที่กรองได้กลับไป (อาจเป็น array ว่าง)
-      return;
+  if (actualReturnDate) { // GET localhost:3010/borrowed-books?actual_return_date=2025-03-05
+    const filteredBorrowedBooksByActualReturnDate = await getBorrowedBooksByActualReturnDate(actualReturnDate);
+    if (actualReturnDate === "null" || actualReturnDate === "undefined") {
+      // กรณีที่ actualReturnDate เป็น "null" หรือ "undefined"
+      res.json(filteredBorrowedBooksByActualReturnDate);
+    } else if (filteredBorrowedBooksByActualReturnDate.length === 0) {
+      // กรณีที่ไม่มีข้อมูลที่ตรงกับ actualReturnDate
+      res.status(404).json({ message: "Borrowing History by this actual return due date not found!" });
+    } else {
+      // กรณีที่มีข้อมูลที่ตรงกับ actualReturnDate
+      res.json(filteredBorrowedBooksByActualReturnDate);
     }
-
-    // ถ้า actualReturnDate ไม่ใช่ "null" หรือ "undefined" และไม่มีข้อมูลที่ตรงกับเงื่อนไข
-    if (filteredBorrowedBooksByActualReturnDate.length === 0) {
-      res.status(404).json({ message: "Borrowing History by this actual return due date not found!" }); // ถ้าไม่พบข้อมูล → ส่ง HTTP 404 (Not Found)
-      return;
-    }
-
-    // ส่งข้อมูลที่กรองได้กลับไป
-    res.json(filteredBorrowedBooksByActualReturnDate); // ถ้ามีข้อมูลที่ตรงกัน → ส่ง JSON กลับไป
-    return;
+    return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  // ถ้าไม่มี query parameters ใดๆ ที่ส่งมา
-  res.json(await getAllBorrowedBooks()); // ถ้าไม่มีการกรองใดๆ → ส่งข้อมูล borrowedBooks ทั้งหมดกลับไป
-  return;
+  // ถ้าไม่มี query parameters ใด ๆ
+  res.json(await getAllBorrowedBooks());
 });
 
-app.get("/borrowed-books/:id", (req, res) => { // localhost:3010/borrowed-books/1
+
+app.get("/borrowed-books/:id", async (req, res) => { // localhost:3010/borrowed-books/1
   const borrowedBook_id = parseInt(req.params.id);
-  const filteredBorrowedBooksById = getBorrowedBookById(borrowedBook_id);
+  const filteredBorrowedBooksById = await getBorrowedBookById(borrowedBook_id);
   if (filteredBorrowedBooksById) {
     // ถ้าค่าที่ส่งมา = id ที่มีในฐานข้อมูล ก็ให้แสดงข้อมูล ของหนังสือเล่มนั้น
     res.json(filteredBorrowedBooksById);
@@ -284,16 +238,30 @@ app.get("/borrowed-books/:id", (req, res) => { // localhost:3010/borrowed-books/
   }
 });
 
-app.post("/books", (req, res) => { // localhost:3010/books
+// เก่า
+// app.post("/books", (req, res) => {
+//   const newBook: Book = req.body;
+//   addBook(newBook);
+//   res.json(newBook);
+// });
+
+// ใหม่
+app.post("/books", (req, res) => {
   const newBook: Book = req.body;
-  addBook(newBook);
-  res.json(newBook);
+  addBook(newBook)
+    .then((addedBook) => {
+      res.json(addedBook);
+    })
+    .catch((error) => {
+      res.status(500).json({ message: "Failed to add book", error });
+    });
 });
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
 
+// ใช้ได้ทั้งคู่
 // {
 //   "title": "AAA",
 //   "isbn": "106",
@@ -313,5 +281,7 @@ app.listen(port, () => {
 //   "title": "AAA",
 //   "isbn": "106",
 //   "category": "Technology",
-//   "authorId": ["1"]  // หรือ "authorId": "id" ถ้ามีผู้เขียนเพียงคนเดียว
+//   "author": [
+//     { "id": 1 }
+//   ]
 // }
