@@ -29,7 +29,8 @@ import type { Book, BorrowedBook, BorrowingHistory, Member } from '../models/boo
 // } from '../repository/booksRepository'; 
 
 // import * as repo from '../repository/booksRepository';
-import * as repo from '../repository/booksRepositoryDb';
+// import * as repo from '../repository/booksRepositoryDb';
+import * as repo from '../repository/booksRepositoryPrisma';
 
 // 4.แยกส่วนที่ใช้ในการหาข้อมูลทั้งหมดในตัว Endpoint ออกมาเป็น function ใหม่ เพื่อให้ในส่วน endpoint ใช้ในการเลือกว่าจะนำข้อมูลใดมานำเสนอเท่านั้น ** เราย้าย type ไปไว้ที่ repository.booksRepository.ts เพื่อจัดการได้ง่ายขึ้น เลยต้อง import เข้ามา 
 
