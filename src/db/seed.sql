@@ -1,3 +1,9 @@
+-- ตั้งค่า time zone เป็น UTC+7
+-- SET GLOBAL time_zone = '+07:00'; 
+-- SET time_zone = '+07:00';
+-- SELECT NOW();
+
+-- ทำการ insert ข้อมูล
 INSERT INTO authors (id,first_name,last_name,affiliation) VALUES
 ( 1, 'James', 'Clear', 'Self-Improvement Publications'),
 ( 2, 'Robert', 'C. Martin', 'Software Engineering Press'),

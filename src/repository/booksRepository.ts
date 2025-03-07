@@ -221,11 +221,11 @@ export function getBorrowingHistoryByBorrowDate(borrowedDate : string): Promise<
 }
 
 export function getBorrowingHistoryByReturnDate(returnDate : string): Promise<BorrowingHistory[]> { // ให้ borrowedDate เป็น string ไป ไม่งั้น มันจะเทียบใน return ไม่ได้  return historyBorrowedDate === borrowedDate;
-  const filteredBorrowingHistoryByBorrowedDate = borrowingHistorys.filter((history) => {
-    const historyBorrowedDate = new Date(history.return_due_date).toISOString().split("T")[0]; // แปลงเป็นรูปแบบ YYYY-MM-DD
-    return historyBorrowedDate === returnDate;
+  const filteredBorrowingHistoryByReturnDate = borrowingHistorys.filter((history) => {
+    const historyReturnDate = new Date(history.return_due_date).toISOString().split("T")[0]; // แปลงเป็นรูปแบบ YYYY-MM-DD
+    return historyReturnDate === returnDate;
   });
-  return Promise.resolve(filteredBorrowingHistoryByBorrowedDate);
+  return Promise.resolve(filteredBorrowingHistoryByReturnDate);
 }
 
 export function getAllBorrowingHistory(): Promise<BorrowingHistory[]> {

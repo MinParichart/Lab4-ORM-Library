@@ -206,7 +206,7 @@ app.get("/borrowed-books", async (req, res) => {
     return; // หยุดการทำงานหลังจากส่ง response
   }
 
-  if (actualReturnDate) { // GET localhost:3010/borrowed-books?actual_return_date=2025-03-05
+  if (actualReturnDate) { // GET localhost:3010/borrowed-books?actual_return_date=2025-03-16
     const filteredBorrowedBooksByActualReturnDate = await getBorrowedBooksByActualReturnDate(actualReturnDate);
     if (actualReturnDate === "null" || actualReturnDate === "undefined") {
       // กรณีที่ actualReturnDate เป็น "null" หรือ "undefined"
@@ -246,7 +246,7 @@ app.get("/borrowed-books/:id", async (req, res) => { // localhost:3010/borrowed-
 // });
 
 // ใหม่
-app.post("/books", (req, res) => {
+app.post("/books", (req, res) => { // POST localhost:3010/books
   const newBook: Book = req.body;
   addBook(newBook)
     .then((addedBook) => {
