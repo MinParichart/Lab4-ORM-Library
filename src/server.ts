@@ -37,7 +37,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 const app = express();
 app.use(express.json());
 app.use('/',bookRoute)
-const port = 3010;
+const port = 3015;
 
 // 3.สร้าง server ด้วย express และสร้าง route
 // ย้าย route ไปไว้ที่ routes.bookRoute.ts
