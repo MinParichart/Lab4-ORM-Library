@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model author { 
+  id          Int         @id @default(autoincrement())
+  first_name  String
+  last_name   String
+  affiliation String
+  books       book[] // ความสัมพันธ์หนึ่ง-to-many กับโมเดล Book
+}
+
+model book { 
+  id          Int         @id @default(autoincrement())
+  title       String
+  isbn        String
+  category    String
+  author_id   Int       
+  author      author      @relation(fields: [author_id], references : [id])   // กำหนด Foreign Key
+  borrowingHistories borrowingHistories[] // ความสัมพันธ์กลับไปยัง borrowingHistories
+}
+
+model member { 
+  id                    Int         @id @default(autoincrement()) 
+  first_name            String
+  last_name             String
+  phone_number          String
+  borrowingHistories    borrowingHistories[] // ความสัมพันธ์กลับไปยัง borrowingHistories
+}
+
+model borrowingHistories { 
+  id                Int       @id @default(autoincrement()) 
+  member_id         Int   
+  book_id           Int   
+  borrow_date       String  
+  return_due_date   String  
+  member            member    @relation(fields: [member_id], references: [id])
+  book              book      @relation(fields: [book_id], references: [id])
+  borrowedBooks     borrowedBooks[] // ความสัมพันธ์กลับไปยัง borrowedBooks
+}
+
+model borrowedBooks { 
+  id                        Int                 @id @default(autoincrement()) 
+  borrowing_id              Int   
+  actual_return_due_date    String 
+  borrowingHistories        borrowingHistories  @relation(fields: [borrowing_id], references: [id])
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
