@@ -28,8 +28,10 @@ import {
 } from './service/bookService';
 
 // import multer, { uploadFile } - Lab3 - Task 9
+import dotenv from 'dotenv';
 import multer from 'multer';
 import { uploadFile } from './service/uploadFileService';
+dotenv.config(); 
 
 
 const app = express();
@@ -270,9 +272,13 @@ app.post('/upload', upload.single('file'), async (req: any, res: any) => { // PO
         return res.status(400).send('No file uploaded.');
       }
   
-      const bucket = 'image_library';
-      const filePath = `uploads_library`;
+      const bucket = process.env.SUPABASE_BUCKET_NAME;
+      const filePath = process.env.UPLOAD_DIR;
    
+      if (!bucket || !filePath) {
+          return res.status(500).send('Bucket name or file path not configured.');
+      }
+      
       const outputUrl = await uploadFile(bucket, filePath, file);
   
       res.status(200).send(outputUrl);
