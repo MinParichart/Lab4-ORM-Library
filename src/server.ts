@@ -27,6 +27,11 @@ import {
   getMemberByPhoneNumber
 } from './service/bookService';
 
+// import multer, { uploadFile } - Lab3 - Task 9
+import multer from 'multer';
+import { uploadFile } from './service/uploadFileService';
+
+
 const app = express();
 app.use(express.json());
 const port = 3010;
@@ -225,7 +230,6 @@ app.get("/borrowed-books", async (req, res) => {
   res.json(await getAllBorrowedBooks());
 });
 
-
 app.get("/borrowed-books/:id", async (req, res) => { // localhost:3010/borrowed-books/1
   const borrowedBook_id = parseInt(req.params.id);
   const filteredBorrowedBooksById = await getBorrowedBookById(borrowedBook_id);
@@ -257,6 +261,26 @@ app.post("/books", (req, res) => { // POST localhost:3010/books
     });
 });
 
+// เพิ่ม endpoint สำหรับ upload file ที่ server.ts - Lab3 - Task 9
+const upload = multer({ storage: multer.memoryStorage() });
+app.post('/upload', upload.single('file'), async (req: any, res: any) => { // POST localhost:3010/upload
+    try {
+      const file = req.file;
+      if (!file) {
+        return res.status(400).send('No file uploaded.');
+      }
+  
+      const bucket = 'image_library';
+      const filePath = `uploads_library/${file.originalname}`;
+   
+      await uploadFile(bucket, filePath, file);
+  
+      res.status(200).send('File uploaded successfully.');
+    } catch (error) {
+      res.status(500).send('Error uploading file.');
+    }
+  });
+  
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
