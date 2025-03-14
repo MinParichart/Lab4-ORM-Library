@@ -30,6 +30,32 @@ export async function createAuthors() {
         }
       });
   }
+
+  // Create new author
+  const newAuthor = await prisma.author.create({
+    data: {
+      first_name: "newAuthor4",
+      last_name : 'New Created4',
+      affiliation : 'Educational Institution4'
+    },
+  });
+  
+  const newAuthor2 = await prisma.author.create({
+    data: {
+      first_name: "newAuthor5",
+      last_name : 'New Created6',
+      affiliation : 'Educational Institution5'
+    },
+  });
+
+  const newAuthor3 = await prisma.author.create({
+    data: {
+      first_name: "newAuthor6",
+      last_name : 'New Created6',
+      affiliation : 'Educational Institution6'
+    },
+  });
+
   console.log("Database has been initialized with authors.");
 }
 export async function createBooks() { 
@@ -76,6 +102,41 @@ export async function createBooks() {
         }
       });
   }
+
+    // Create new books
+    const newBook = await prisma.book.create({
+      data: {
+        title: "newBook6",
+        isbn : '106',
+        category : 'Technology',
+        author : { connect : { id : 5 } }
+      },
+    });
+
+    const newBook7 = await prisma.book.create({
+      data: {
+        title: "newBook7",
+        isbn : '107',
+        category : 'Education',
+        author :  { connect : { id : 6 } } // กำหนดความสัมพันธ์กับ author แล้ว
+      },
+    });
+
+    // อันนี้เป้นการเชื่อม book กับ author โดยใช้ id ของ book และ id ของ author แต่ว่าเราสร้าง newBook โดยกำหนดความสัมพันธ์กับ author แล้ว จึงไม่จำเป็นตองสร้าง const responseBooks แล้ว
+    // เอามาใส่ให้ดูเพื่อเป็นตัวอย่างว่าเราสามารถเชื่อม book กับ author ได้โดยใช้ id ของ book และ id ของ author
+    // const responseBooks = await prisma.book.findMany();
+
+    // await prisma.book.update({
+    //   where: { id: responseBooks[0].id },
+    //   data: {
+    //     author: {
+    //       connect: {
+    //         id: newBook.id,
+    //       },
+    //     },
+    //   },
+    // });
+
   console.log("Database has been initialized with books.");
 }
 
