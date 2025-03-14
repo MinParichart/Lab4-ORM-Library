@@ -147,13 +147,32 @@ export function getBooksByCategory(category: string): Promise<Book[]> {
     const filteredBooksByCategory = books.filter((book) => book.category === category);
   return Promise.resolve(filteredBooksByCategory);
 }
+
+// เก่า 
+// export function getBooksByAuthor_id(authorId: number): Promise<Book[]> {
+//   return Promise.resolve(books.filter((book) => book.author.some((a) => a.id === authorId))); // กรองหนังสือตาม author id
+// }
+
+// ใหม่
 export function getBooksByAuthor_id(authorId: number): Promise<Book[]> {
-  return Promise.resolve(books.filter((book) => book.author.some((a) => a.id === authorId))); // กรองหนังสือตาม author id
+  return Promise.resolve(books.filter((book) => book.author && book.author.some((a) => a.id === authorId))); // กรองหนังสือตาม author id
 }
 
+// เก่า 
+// export function getBooksByAuthor_name(authorName: string): Promise<Book[]> {
+//   const filteredBooksByAuthor_name = books.filter((book) =>
+//     book.author.some(
+//       (a) =>
+//         a.first_name.toLowerCase().includes(authorName) ||
+//         a.last_name.toLowerCase().includes(authorName)
+//     ));
+//   return Promise.resolve(filteredBooksByAuthor_name); // กรองหนังสือตาม author id
+// }
+
+// ใหม่
 export function getBooksByAuthor_name(authorName: string): Promise<Book[]> {
   const filteredBooksByAuthor_name = books.filter((book) =>
-    book.author.some(
+    book.author && book.author.some(
       (a) =>
         a.first_name.toLowerCase().includes(authorName) ||
         a.last_name.toLowerCase().includes(authorName)

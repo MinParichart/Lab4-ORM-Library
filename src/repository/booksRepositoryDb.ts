@@ -365,10 +365,18 @@ export async function getBorrowedBookById(
 // }
 
 // ใหม่
+// export async function addBook(newBook: Book): Promise<Book> {
+//   // ดึง author_id จากอาร์เรย์ author
+//   const authorId = newBook.author[0].id; // ใช้ author_id ของ author คนแรก
+
+
+// ใหม่สุด
 export async function addBook(newBook: Book): Promise<Book> {
   // ดึง author_id จากอาร์เรย์ author
-  const authorId = newBook.author[0].id; // ใช้ author_id ของ author คนแรก
-
+  const authorId = newBook.author?.[0]?.id; // ใช้ author_id ของ author คนแรก
+  if (!authorId) {
+    throw new Error("Author ID is undefined");
+  }
   const [result] = await connection.execute(
     'INSERT INTO books (title, isbn, category, author_id) VALUES (?, ?, ?, ?)',
     [newBook.title, newBook.isbn, newBook.category, authorId]

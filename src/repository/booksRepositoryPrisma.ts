@@ -481,13 +481,17 @@ export async function getBorrowedBookById(
   };
 }
 
+// เก่า
+// export async function addBook(newBook: Book): Promise<Book> {
+//   const authorId = newBook.author[0].id; // ใช้ author_id ของ author คนแรก
 
-
-
-
-export async function addBook(newBook: Book): Promise<Book> {
-  const authorId = newBook.author[0].id; // ใช้ author_id ของ author คนแรก
-
+// ใหม่
+  export async function addBook(newBook: Book): Promise<Book> {
+    const authorId = newBook.author?.[0]?.id; // ใช้ author_id ของ author คนแรก
+    if (!authorId) {
+      throw new Error('Author ID is required');
+    }
+  
   const book = await prisma.book.create({
     data: {
       title: newBook.title,
@@ -502,7 +506,7 @@ export async function addBook(newBook: Book): Promise<Book> {
 
   return {
     ...book,
-    author: [book.author], // แปลง author เป็นอาร์เรย์
+    author: [book.author || ''], // แปลง author เป็นอาร์เรย์
   };
 }
 
